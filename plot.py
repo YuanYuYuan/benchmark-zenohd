@@ -4,17 +4,17 @@ import pandas as pd
 import plotly.graph_objects as go
 from tap import Tap
 from pathlib import Path
-import os
 
 class Arg(Tap):
     exps_dir = './exp'
     remove_warmup: bool = False
 
 
-
 args = Arg().parse_args()
 
-commit_list = os.listdir('./zn-commits')
+with open('./selected-commits.txt') as f:
+    commit_list = [l.strip() for l in f.readlines()]
+print(commit_list)
 
 
 def plot_exp(exp_path):

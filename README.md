@@ -7,10 +7,11 @@
     The default selected commits are
 
     ```txt
-    afa20ff6
+    90a0e278
     270422c3
     ac36c205
-    90a0e278
+    afa20ff6
+    10e59b3d
     ```
 
 2. Setup the environment. This step includes
