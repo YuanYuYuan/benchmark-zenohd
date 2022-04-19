@@ -29,3 +29,7 @@ make setup_all
 ```bash
 make run_all
 ```
+
+## Example
+
+![](./pic/example.png)
