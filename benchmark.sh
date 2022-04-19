@@ -7,8 +7,6 @@ if [ "$EUID" -ne 0 ]
 fi
 
 
-
-
 trap ctrl_c INT
 
 function ctrl_c() {
@@ -22,14 +20,17 @@ function cleanup() {
     pkill z_pub_thr
 }
 
-cleanup
 
 exp_dir="./exp"
-n_exp=2
-duration="10s"
+
+# Some parameters to adjust
+n_exp=2          # total number of experiments
+duration="10s"   # testing time of each experiments
+payload_size=8   # payload size used in pub
 
 sub="./zenoh-pico/build/examples/zn_sub_thr"
 
+cleanup
 for i in $(seq 1 $n_exp); do
 
     out_dir="${exp_dir}/${i}"
@@ -48,7 +49,7 @@ for i in $(seq 1 $n_exp); do
         sleep 2
         nice -n -10 stdbuf -oL $sub > $log_file &
         sleep 2
-        timeout $duration nice -n -10 $pub 8 --print > /dev/null
+        timeout $duration nice -n -10 $pub $payload_size --print > /dev/null
         cleanup
         sleep 1
     done
