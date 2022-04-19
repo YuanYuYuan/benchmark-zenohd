@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+if [ ! $(nproc) -ge 6 ]; then
+    echo 'This experiment requires at least 6 processors to run.'
+    exit
+fi
 
 if [ "$EUID" -ne 0 ]
   then echo "Please run as root"
@@ -24,8 +28,8 @@ function cleanup() {
 exp_dir="./exp"
 
 # Some parameters to adjust
-n_exp=2          # total number of experiments
-duration="10s"   # testing time of each experiments
+n_exp=4          # total number of experiments
+duration="30s"   # testing time of each experiments
 payload_size=8   # payload size used in pub
 
 sub="./zenoh-pico/build/examples/zn_sub_thr"
@@ -45,11 +49,11 @@ for i in $(seq 1 $n_exp); do
         zenohd="./zn-commits/${commit}/target/release/zenohd"
         pub="./zn-commits/${commit}/target/release/examples/z_pub_thr"
 
-        nice -n -10 $zenohd &
+        nice -n -10 taskset -c 0,1 $zenohd &
         sleep 2
-        nice -n -10 stdbuf -oL $sub > $log_file &
+        nice -n -10 taskset -c 2,3 stdbuf -oL $sub > $log_file &
         sleep 2
-        timeout $duration nice -n -10 $pub $payload_size --print > /dev/null
+        timeout $duration nice -n -10 taskset -c 4,5 $pub $payload_size --print > /dev/null
         cleanup
         sleep 1
     done
